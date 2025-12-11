@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EKO QR Code - Share & Print</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --accent-cyan: #00f5d4;
+            --accent-magenta: #f72585;
+            --accent-purple: #7b2cbf;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            display: inline-block;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 245, 212, 0.3);
+        }
+
+        .qr-code {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .url {
+            font-size: 1.5rem;
+            color: var(--accent-cyan);
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .description {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border: none;
+            border-radius: 100px;
+            padding: 16px 32px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--bg-dark);
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 8px 30px rgba(0, 245, 212, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 245, 212, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .info {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .info h3 {
+            color: var(--accent-cyan);
+            margin-bottom: 16px;
+        }
+
+        .info ul {
+            text-align: left;
+            color: var(--text-secondary);
+            line-height: 2;
+        }
+
+        .info li {
+            margin-left: 20px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .qr-container {
+                padding: 20px;
+            }
+
+            .qr-code {
+                max-width: 300px;
+            }
+
+            .url {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .buttons,
+            .description,
+            .info {
+                display: none;
+            }
+
+            .qr-container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>EKO</h1>
+        <p class="subtitle">Embodied Kinetic Orchestra</p>
+
+        <div class="qr-container">
+            <img src="eko-qr-code.png" alt="QR Code for EKO Questionnaire" class="qr-code">
+        </div>
+
+        <div class="url">sean4e.github.io/eko</div>
+
+        <p class="description">
+            Scan this QR code to participate in the EKO questionnaire.
+            Share your thoughts on myths, movement, sound, visuals, and personal rituals
+            to help shape an immersive art experience.
+        </p>
+
+        <div class="buttons">
+            <a href="eko-qr-code.png" download="eko-qr-code.png" class="btn">Download QR Code</a>
+            <a href="eko-qr-code-hires.png" download="eko-qr-code-hires.png" class="btn btn-secondary">Download High-Res</a>
+            <a href="eko-poster.png" download="eko-poster.png" class="btn btn-secondary">Download Poster</a>
+            <button onclick="window.print()" class="btn btn-secondary">Print QR Code</button>
+        </div>
+
+        <div class="info">
+            <h3>Share This QR Code</h3>
+            <ul>
+                <li>📱 Add to social media posts</li>
+                <li>🖨️ Print on flyers or posters</li>
+                <li>📧 Include in email campaigns</li>
+                <li>💬 Share in presentations</li>
+                <li>🎨 Display at exhibitions or events</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Copy URL to clipboard when clicking on it
+        document.querySelector('.url').addEventListener('click', function() {
+            navigator.clipboard.writeText('https://sean4e.github.io/eko').then(() => {
+                const original = this.textContent;
+                this.textContent = '✓ Copied to clipboard!';
+                setTimeout(() => {
+                    this.textContent = original;
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
