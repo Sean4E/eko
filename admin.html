@@ -10,6 +10,9 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -246,9 +249,11 @@
         </div>
 
         <div class="actions">
-            <button class="btn" onclick="exportResponsesAsCSV()">📊 Export as CSV</button>
+            <button class="btn" onclick="exportResponsesAsCSV()">📊 Export CSV</button>
+            <button class="btn" onclick="exportExcel()">📈 Export Excel</button>
             <button class="btn-secondary btn" onclick="downloadJSON()">📥 Download JSON</button>
             <button class="btn-secondary btn" onclick="loadResponses()">🔄 Refresh</button>
+            <a href="analytics.html" class="btn-secondary btn">📊 View Analytics</a>
         </div>
 
         <div class="responses-container">
@@ -413,6 +418,56 @@
             link.click();
 
             URL.revokeObjectURL(url);
+        }
+
+        // Export to Excel
+        function exportExcel() {
+            if (!allResponsesData) {
+                alert('No data to export. Please wait for data to load.');
+                return;
+            }
+
+            const responsesArray = Object.values(allResponsesData);
+            const wb = XLSX.utils.book_new();
+
+            // Sheet 1: Summary
+            const summaryData = [
+                ['EKO Admin Dashboard Export'],
+                ['Generated:', new Date().toLocaleString()],
+                [''],
+                ['Total Responses:', responsesArray.length],
+                ['Date Range:', 'All Time']
+            ];
+            const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+            XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
+
+            // Sheet 2: All Responses (complete data)
+            const wsResponses = XLSX.utils.json_to_sheet(responsesArray);
+            XLSX.utils.book_append_sheet(wb, wsResponses, 'All Responses');
+
+            // Sheet 3: By Question (pivot format)
+            const questionsData = [['Question', 'Response Count']];
+            const questionCounts = {};
+
+            responsesArray.forEach(r => {
+                Object.keys(r).forEach(key => {
+                    if (key !== 'id' && key !== 'timestamp' && key !== 'participantName' && key !== 'submittedAt') {
+                        if (!questionCounts[key]) questionCounts[key] = 0;
+                        if (r[key] && r[key] !== '') questionCounts[key]++;
+                    }
+                });
+            });
+
+            Object.entries(questionCounts).sort((a, b) => b[1] - a[1]).forEach(([q, count]) => {
+                questionsData.push([q, count]);
+            });
+
+            const wsQuestions = XLSX.utils.aoa_to_sheet(questionsData);
+            XLSX.utils.book_append_sheet(wb, wsQuestions, 'Question Stats');
+
+            // Save file
+            const fileName = `EKO-Admin-Export-${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
         }
 
         // Initialize on load
