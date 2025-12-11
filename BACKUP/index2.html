@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EKO - Embodied Kinetic Orchestra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-cyan: #00f5d4;
+            --accent-magenta: #f72585;
+            --accent-purple: #7b2cbf;
+            --accent-orange: #ff9f1c;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-orb:nth-child(1) {
+            width: 600px;
+            height: 600px;
+            background: var(--accent-purple);
+            top: -200px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .bg-orb:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            background: var(--accent-cyan);
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        .bg-orb:nth-child(3) {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-magenta);
+            top: 50%;
+            left: 50%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -50px) scale(1.1); }
+            50% { transform: translate(-30px, 30px) scale(0.9); }
+            75% { transform: translate(-50px, -20px) scale(1.05); }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta), var(--accent-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            padding: 6px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta));
+            border-radius: 100px;
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-text {
+            text-align: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 12px;
+        }
+
+        /* Section cards */
+        .section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .section:nth-child(1) { animation-delay: 0.1s; }
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.3s; }
+        .section:nth-child(4) { animation-delay: 0.4s; }
+        .section:nth-child(5) { animation-delay: 0.5s; }
+        .section:nth-child(6) { animation-delay: 0.6s; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .section-icon.emotion { background: linear-gradient(135deg, var(--accent-magenta), var(--accent-purple)); }
+        .section-icon.movement { background: linear-gradient(135deg, var(--accent-cyan), #3a86ff); }
+        .section-icon.sound { background: linear-gradient(135deg, var(--accent-orange), #ff6b6b); }
+        .section-icon.visual { background: linear-gradient(135deg, #9b5de5, var(--accent-magenta)); }
+        .section-icon.theme { background: linear-gradient(135deg, #06d6a0, var(--accent-cyan)); }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        /* Questions */
+        .question {
+            margin-bottom: 28px;
+        }
+
+        .question:last-child {
+            margin-bottom: 0;
+        }
+
+        .question-label {
+            display: block;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* Text inputs */
+        .text-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 245, 212, 0.15);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .text-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Choice buttons */
+        .choice-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .choice-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            padding: 10px 20px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .choice-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .choice-btn.selected {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-color: transparent;
+            font-weight: 600;
+        }
+
+        /* Slider */
+        .slider-container {
+            padding: 10px 0;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 245, 212, 0.4);
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Toggle options */
+        .toggle-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .toggle-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-option:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-3px);
+        }
+
+        .toggle-option.selected {
+            background: linear-gradient(135deg, rgba(0, 245, 212, 0.2), rgba(123, 44, 191, 0.2));
+            border-color: var(--accent-cyan);
+        }
+
+        .toggle-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .toggle-option.selected .toggle-label {
+            color: var(--text-primary);
+        }
+
+        /* Submit section */
+        .submit-section {
+            text-align: center;
+            margin-top: 40px;
+            animation: fadeInUp 0.6s ease-out 0.7s forwards;
+            opacity: 0;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            border: none;
+            border-radius: 100px;
+            padding: 18px 48px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--bg-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(0, 245, 212, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 245, 212, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Name input */
+        .name-input {
+            width: 100%;
+            max-width: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .name-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+
+        /* Success state */
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 24px;
+        }
+
+        .success-message h2 {
+            font-size: 2rem;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .success-message p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .download-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            padding: 14px 32px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 8px;
+        }
+
+        .download-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+
+            .choice-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+
+            .toggle-group {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <h1>EKO - Embodied Kinetic Orchestra</h1>
+            <p>Your ideas will help create an immersive experience combining movement, sound, visuals & AR. Let's build something amazing together!</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-text"><span id="progressCount">0</span> of <span id="totalQuestions">15</span> questions answered</div>
+
+        <form id="questionnaire">
+            <!-- Experience & Emotion -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon emotion">💫</div>
+                    <h2 class="section-title">Experience & Emotion</h2>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">If you could step into a space that made you feel any emotion, what would you want to feel?</label>
+                    <div class="choice-group" data-question="emotion-feel">
+                        <button type="button" class="choice-btn" data-value="excited">Excited</button>
+                        <button type="button" class="choice-btn" data-value="calm">Calm & Peaceful</button>
+                        <button type="button" class="choice-btn" data-value="amazed">Amazed</button>
+                        <button type="button" class="choice-btn" data-value="powerful">Powerful</button>
+                        <button type="button" class="choice-btn" data-value="connected">Connected</button>
+                        <button type="button" class="choice-btn" data-value="playful">Playful</button>
+                        <button type="button" class="choice-btn" data-value="dreamy">Dreamy</button>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">What's a moment where you felt completely immersed in an experience? What made it special?</label>
+                    <textarea class="text-input" data-question="immersive-moment" placeholder="Tell us about that moment..."></textarea>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">What kind of vibe do you prefer?</label>
+                    <div class="slider-container">
+                        <div class="slider-labels">
+                            <span>🌙 Calm & Dreamy</span>
+                            <span>⚡ Energetic & Intense</span>
+                        </div>
+                        <input type="range" class="slider" min="1" max="5" value="3" data-question="vibe-preference">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Movement & Interaction -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon movement">🕺</div>
+                    <h2 class="section-title">Movement & Interaction</h2>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">If your body could control something magical (lights, sounds, shapes), what would you want to control?</label>
+                    <textarea class="text-input" data-question="body-control" placeholder="Imagine the possibilities..."></textarea>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">How would you prefer to interact?</label>
+                    <div class="toggle-group" data-question="interaction-style">
+                        <div class="toggle-option" data-value="solo">
+                            <div class="toggle-icon">🧘</div>
+                            <div class="toggle-label">Solo experience</div>
+                        </div>
+                        <div class="toggle-option" data-value="friend">
+                            <div class="toggle-icon">👯</div>
+                            <div class="toggle-label">With a friend</div>
+                        </div>
+                        <div class="toggle-option" data-value="group">
+                            <div class="toggle-icon">🪩</div>
+                            <div class="toggle-label">Small group</div>
+                        </div>
+                        <div class="toggle-option" data-value="crowd">
+                            <div class="toggle-icon">🎪</div>
+                            <div class="toggle-label">Big crowd</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">Spotlight or subtle influence?</label>
+                    <div class="slider-container">
+                        <div class="slider-labels">
+                            <span>🔮 Subtle & Hidden</span>
+                            <span>✨ Centre of Attention</span>
+                        </div>
+                        <input type="range" class="slider" min="1" max="5" value="3" data-question="spotlight-preference">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sound & Music -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon sound">🎵</div>
+                    <h2 class="section-title">Sound & Music</h2>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">What kind of music or sounds make you want to move?</label>
+                    <div class="choice-group" data-question="music-style" data-multi="true">
+                        <button type="button" class="choice-btn" data-value="electronic">Electronic</button>
+                        <button type="button" class="choice-btn" data-value="hip-hop">Hip-Hop</button>
+                        <button type="button" class="choice-btn" data-value="pop">Pop</button>
+                        <button type="button" class="choice-btn" data-value="ambient">Ambient</button>
+                        <button type="button" class="choice-btn" data-value="rock">Rock</button>
+                        <button type="button" class="choice-btn" data-value="classical">Classical</button>
+                        <button type="button" class="choice-btn" data-value="world">World Music</button>
+                        <button type="button" class="choice-btn" data-value="nature">Nature Sounds</button>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">If each part of your body could make a sound, what would that be?</label>
+                    <div class="toggle-group" data-question="biometric-sound">
+                        <div class="toggle-option" data-value="cool">
+                            <div class="toggle-icon">🔥</div>
+                            <div class="toggle-label">Instrument</div>
+                        </div>
+                        <div class="toggle-option" data-value="interesting">
+                            <div class="toggle-icon">🤔</div>
+                            <div class="toggle-label">Natural</div>
+                        </div>
+                        <div class="toggle-option" data-value="weird">
+                            <div class="toggle-icon">😅</div>
+                            <div class="toggle-label">Technological</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">Should the sound respond to you, or should you respond to the sound?</label>
+                    <div class="slider-container">
+                        <div class="slider-labels">
+                            <span>🎧 I follow the sound</span>
+                            <span>🎹 Sound follows me</span>
+                        </div>
+                        <input type="range" class="slider" min="1" max="5" value="3" data-question="sound-relationship">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visuals & AR -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon visual">👁️</div>
+                    <h2 class="section-title">Visuals & AR</h2>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">If your body could create visuals, what would it be? Why?</label>
+                    <textarea class="text-input" data-question="ar-vision" placeholder="Describe your impossible vision..."></textarea>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">What style of visuals appeals to you most?</label>
+                    <div class="toggle-group" data-question="visual-style">
+                        <div class="toggle-option" data-value="realistic">
+                            <div class="toggle-icon">🌍</div>
+                            <div class="toggle-label">Realistic</div>
+                        </div>
+                        <div class="toggle-option" data-value="abstract">
+                            <div class="toggle-icon">🌀</div>
+                            <div class="toggle-label">Abstract shapes</div>
+                        </div>
+                        <div class="toggle-option" data-value="nature">
+                            <div class="toggle-icon">🌿</div>
+                            <div class="toggle-label">Nature-inspired</div>
+                        </div>
+                        <div class="toggle-option" data-value="geometric">
+                            <div class="toggle-icon">💎</div>
+                            <div class="toggle-label">Geometric</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">Would you want your creation to stay after you leave, or disappear?</label>
+                    <div class="toggle-group" data-question="permanence">
+                        <div class="toggle-option" data-value="permanent">
+                            <div class="toggle-icon">🏛️</div>
+                            <div class="toggle-label">Leave my mark</div>
+                        </div>
+                        <div class="toggle-option" data-value="temporary">
+                            <div class="toggle-icon">✨</div>
+                            <div class="toggle-label">Disappears with me</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Themes & Meaning -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon theme">💭</div>
+                    <h2 class="section-title">Themes & Meaning</h2>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">What topics matter to you right now? (Pick all that resonate)</label>
+                    <div class="choice-group" data-question="topics" data-multi="true">
+                        <button type="button" class="choice-btn" data-value="climate">Climate & Nature</button>
+                        <button type="button" class="choice-btn" data-value="identity">Identity</button>
+                        <button type="button" class="choice-btn" data-value="connection">Human Connection</button>
+                        <button type="button" class="choice-btn" data-value="escapism">Escapism</button>
+                        <button type="button" class="choice-btn" data-value="future">The Future</button>
+                        <button type="button" class="choice-btn" data-value="creativity">Creativity</button>
+                        <button type="button" class="choice-btn" data-value="community">Community</button>
+                        <button type="button" class="choice-btn" data-value="space">Space & Universe</button>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">What should art do for you?</label>
+                    <div class="toggle-group" data-question="art-purpose">
+                        <div class="toggle-option" data-value="think">
+                            <div class="toggle-icon">🧠</div>
+                            <div class="toggle-label">Make me think</div>
+                        </div>
+                        <div class="toggle-option" data-value="feel">
+                            <div class="toggle-icon">💗</div>
+                            <div class="toggle-label">Make me feel</div>
+                        </div>
+                        <div class="toggle-option" data-value="play">
+                            <div class="toggle-icon">🎮</div>
+                            <div class="toggle-label">Let me play</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <label class="question-label">If this installation could say one thing to people, what should it be?</label>
+                    <textarea class="text-input" data-question="message" placeholder="What message should we share?"></textarea>
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <input type="text" class="name-input" id="participantName" placeholder="Your name (optional)">
+                <br>
+                <button type="submit" class="submit-btn">Submit My Ideas ✨</button>
+            </div>
+        </form>
+
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">🎉</div>
+            <h2>Thank You!</h2>
+            <p>Your ideas will help shape something incredible. Can't wait for you to experience it!</p>
+            <button class="download-btn" onclick="downloadResponses()">📥 Download Responses</button>
+            <button class="download-btn" onclick="resetForm()">🔄 Start Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Store all responses
+        let responses = {};
+        let answeredQuestions = new Set();
+
+        // Update progress
+        function updateProgress() {
+            const total = 15;
+            const answered = answeredQuestions.size;
+            const percentage = (answered / total) * 100;
+            
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressCount').textContent = answered;
+        }
+
+        // Handle choice buttons (single select)
+        document.querySelectorAll('.choice-group:not([data-multi="true"])').forEach(group => {
+            group.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    group.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    
+                    const question = group.dataset.question;
+                    responses[question] = btn.dataset.value;
+                    answeredQuestions.add(question);
+                    updateProgress();
+                });
+            });
+        });
+
+        // Handle choice buttons (multi select)
+        document.querySelectorAll('.choice-group[data-multi="true"]').forEach(group => {
+            group.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    btn.classList.toggle('selected');
+                    
+                    const question = group.dataset.question;
+                    const selected = Array.from(group.querySelectorAll('.choice-btn.selected'))
+                        .map(b => b.dataset.value);
+                    
+                    responses[question] = selected;
+                    if (selected.length > 0) {
+                        answeredQuestions.add(question);
+                    } else {
+                        answeredQuestions.delete(question);
+                    }
+                    updateProgress();
+                });
+            });
+        });
+
+        // Handle toggle options
+        document.querySelectorAll('.toggle-group').forEach(group => {
+            group.querySelectorAll('.toggle-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    group.querySelectorAll('.toggle-option').forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                    
+                    const question = group.dataset.question;
+                    responses[question] = option.dataset.value;
+                    answeredQuestions.add(question);
+                    updateProgress();
+                });
+            });
+        });
+
+        // Handle text inputs
+        document.querySelectorAll('.text-input').forEach(input => {
+            input.addEventListener('input', () => {
+                const question = input.dataset.question;
+                responses[question] = input.value;
+                
+                if (input.value.trim().length > 0) {
+                    answeredQuestions.add(question);
+                } else {
+                    answeredQuestions.delete(question);
+                }
+                updateProgress();
+            });
+        });
+
+        // Handle sliders
+        document.querySelectorAll('.slider').forEach(slider => {
+            slider.addEventListener('input', () => {
+                const question = slider.dataset.question;
+                responses[question] = slider.value;
+                answeredQuestions.add(question);
+                updateProgress();
+            });
+        });
+
+        // Handle form submission
+        document.getElementById('questionnaire').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            responses.participantName = document.getElementById('participantName').value || 'Anonymous';
+            responses.timestamp = new Date().toISOString();
+            
+            // Hide form, show success
+            document.getElementById('questionnaire').classList.add('hidden');
+            document.getElementById('successMessage').classList.add('show');
+            
+            // Log responses (in production, you'd send this to a server)
+            console.log('Responses:', responses);
+        });
+
+        // Download responses as JSON
+        function downloadResponses() {
+            const dataStr = JSON.stringify(responses, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `installation-feedback-${responses.participantName.replace(/\s+/g, '-')}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+        }
+
+        // Reset form
+        function resetForm() {
+            responses = {};
+            answeredQuestions.clear();
+            
+            document.querySelectorAll('.choice-btn, .toggle-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.text-input').forEach(input => {
+                input.value = '';
+            });
+            
+            document.querySelectorAll('.slider').forEach(slider => {
+                slider.value = 3;
+            });
+            
+            document.getElementById('participantName').value = '';
+            document.getElementById('questionnaire').classList.remove('hidden');
+            document.getElementById('successMessage').classList.remove('show');
+            
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>
