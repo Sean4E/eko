@@ -890,7 +890,7 @@
         function createThemesChart(themes) {
             const ctx = document.getElementById('themesChart').getContext('2d');
             new Chart(ctx, {
-                type: 'horizontalBar',
+                type: 'bar',
                 data: {
                     labels: Object.keys(themes).map(t => t.charAt(0).toUpperCase() + t.slice(1)),
                     datasets: [{
