@@ -3,12 +3,12 @@
 // Get these from: https://console.firebase.google.com/u/0/project/eko1-4e/settings/general
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY_HERE",
+    apiKey: "AIzaSyBEYWPBzS4wLfPZVDGrof9YcMMdK83b8i4",
     authDomain: "eko1-4e.firebaseapp.com",
     projectId: "eko1-4e",
-    storageBucket: "eko1-4e.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID_HERE",
-    appId: "YOUR_APP_ID_HERE",
+    storageBucket: "eko1-4e.firebasestorage.app",
+    messagingSenderId: "433555664638",
+    appId: "1:433555664638:web:768fb8a3e1e9fc01f8bfaf",
     databaseURL: "https://eko1-4e-default-rtdb.firebaseio.com"
 };
 
