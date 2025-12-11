@@ -686,6 +686,7 @@
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="firebase-config.js"></script>
 
@@ -700,7 +701,36 @@
         // Initialize Firebase and load data
         async function loadAnalytics() {
             try {
-                initializeFirebase();
+                const initialized = initializeFirebase();
+
+                if (!initialized) {
+                    document.getElementById('loadingState').innerHTML = `
+                        <div style="text-align: center; color: var(--accent-magenta);">
+                            <h2>⚠️ Firebase Not Configured</h2>
+                            <p>Please update firebase-config.js with your Firebase credentials.</p>
+                            <p>See FIREBASE_SETUP.md for instructions.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Authenticate anonymously for analytics access (required by security rules)
+                try {
+                    await firebase.auth().signInAnonymously();
+                    console.log('✅ Authenticated for analytics access');
+                } catch (authError) {
+                    console.error('❌ Authentication failed:', authError);
+                    document.getElementById('loadingState').innerHTML = `
+                        <div style="text-align: center; color: var(--accent-magenta);">
+                            <h2>⚠️ Authentication Required</h2>
+                            <p>Unable to authenticate for analytics access.</p>
+                            <p>Error: ${authError.message}</p>
+                            <p>Make sure Anonymous Authentication is enabled in Firebase Console.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
                 const responses = await getAllResponses();
 
                 if (!responses || Object.keys(responses).length === 0) {
@@ -1208,6 +1238,11 @@
         // Export to Excel
         async function exportExcel() {
             try {
+                // Ensure authenticated before fetching data
+                if (!firebase.auth().currentUser) {
+                    await firebase.auth().signInAnonymously();
+                }
+
                 const responses = await getAllResponses();
 
                 if (!responses || Object.keys(responses).length === 0) {

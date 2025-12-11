@@ -1,0 +1,88 @@
+{
+  "rules": {
+    "responses": {
+      ".read": "auth != null",
+      ".write": true,
+      "$responseId": {
+        ".validate": "newData.hasChildren(['timestamp', 'participantName'])",
+        ".write": "!data.exists()",
+        "timestamp": {
+          ".validate": "newData.isString()"
+        },
+        "participantName": {
+          ".validate": "newData.val() === 'Anonymous'"
+        },
+        "myth-story": {
+          ".validate": "newData.isString()"
+        },
+        "myth-evokes": {
+          ".validate": "newData.hasChildren()"
+        },
+        "myth-impact": {
+          ".validate": "newData.isString()"
+        },
+        "emotion-feel": {
+          ".validate": "newData.isString()"
+        },
+        "immersive-moment": {
+          ".validate": "newData.isString()"
+        },
+        "vibe-preference": {
+          ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 5"
+        },
+        "body-control": {
+          ".validate": "newData.isString()"
+        },
+        "interaction-style": {
+          ".validate": "newData.isString()"
+        },
+        "spotlight-preference": {
+          ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 5"
+        },
+        "music-style": {
+          ".validate": "newData.hasChildren()"
+        },
+        "custom-sound": {
+          ".validate": "newData.isString()"
+        },
+        "biometric-sound": {
+          ".validate": "newData.isString()"
+        },
+        "sound-relationship": {
+          ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 5"
+        },
+        "ar-vision": {
+          ".validate": "newData.isString()"
+        },
+        "visual-style": {
+          ".validate": "newData.isString()"
+        },
+        "permanence": {
+          ".validate": "newData.isString()"
+        },
+        "topics": {
+          ".validate": "newData.hasChildren()"
+        },
+        "art-purpose": {
+          ".validate": "newData.isString()"
+        },
+        "message": {
+          ".validate": "newData.isString()"
+        },
+        "ritual-practice": {
+          ".validate": "newData.isString()"
+        },
+        "ritual-feelings": {
+          ".validate": "newData.hasChildren()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "$other": {
+      ".read": false,
+      ".write": false
+    }
+  }
+}

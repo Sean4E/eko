@@ -267,6 +267,7 @@
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <!-- Firebase configuration -->
@@ -290,7 +291,22 @@
                 return;
             }
 
-            await loadResponses();
+            // Authenticate anonymously for admin access (required by security rules)
+            try {
+                await firebase.auth().signInAnonymously();
+                console.log('✅ Authenticated for admin access');
+                await loadResponses();
+            } catch (error) {
+                console.error('❌ Authentication failed:', error);
+                document.getElementById('responsesDisplay').innerHTML = `
+                    <div class="error">
+                        <h2>⚠️ Authentication Required</h2>
+                        <p>Unable to authenticate for admin access.</p>
+                        <p>Error: ${error.message}</p>
+                        <p>Make sure Anonymous Authentication is enabled in Firebase Console.</p>
+                    </div>
+                `;
+            }
         }
 
         // Load and display responses
