@@ -1,55 +1,99 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background circle with gradient -->
+  <!-- Enhanced gradients -->
   <defs>
     <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#00f5d4;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#7b2cbf;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#f72585;stop-opacity:1" />
+      <stop offset="35%" style="stop-color:#7b2cbf;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#f72585;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff9f1c;stop-opacity:1" />
     </linearGradient>
     <linearGradient id="grad2" x1="0%" y1="100%" x2="100%" y2="0%">
       <stop offset="0%" style="stop-color:#ff9f1c;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#00f5d4;stop-opacity:1" />
     </linearGradient>
+    <radialGradient id="grad3" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#00f5d4;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#f72585;stop-opacity:0.3" />
+    </radialGradient>
+
+    <!-- Glow filter -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
 
-  <!-- Main circle background -->
-  <circle cx="256" cy="256" r="240" fill="url(#grad1)" opacity="0.2"/>
+  <!-- Orbital rings (movement) -->
+  <circle cx="256" cy="256" r="220" fill="none" stroke="url(#grad1)" stroke-width="2" opacity="0.3"/>
+  <circle cx="256" cy="256" r="200" fill="none" stroke="url(#grad1)" stroke-width="3" opacity="0.5" stroke-dasharray="10 5"/>
+  <circle cx="256" cy="256" r="180" fill="none" stroke="url(#grad1)" stroke-width="2" opacity="0.4"/>
 
-  <!-- Outer circle border -->
-  <circle cx="256" cy="256" r="220" fill="none" stroke="url(#grad1)" stroke-width="3" opacity="0.6"/>
+  <!-- Central energy core (visuals) -->
+  <circle cx="256" cy="256" r="80" fill="url(#grad3)" opacity="0.3" filter="url(#glow)"/>
+  <circle cx="256" cy="256" r="60" fill="none" stroke="url(#grad1)" stroke-width="3" opacity="0.8"/>
 
-  <!-- Central person figure (embodied) -->
-  <ellipse cx="256" cy="200" rx="35" ry="40" fill="url(#grad2)"/>
-  <rect x="236" y="235" width="40" height="80" rx="10" fill="url(#grad2)"/>
-  <rect x="216" y="245" width="20" height="60" rx="10" fill="url(#grad2)" transform="rotate(-20 226 275)"/>
-  <rect x="276" y="245" width="20" height="60" rx="10" fill="url(#grad2)" transform="rotate(20 286 275)"/>
-  <rect x="236" y="310" width="18" height="70" rx="9" fill="url(#grad2)"/>
-  <rect x="258" y="310" width="18" height="70" rx="9" fill="url(#grad2)"/>
+  <!-- Dynamic human figure (embodied movement) -->
+  <!-- Head -->
+  <circle cx="256" cy="230" r="25" fill="url(#grad2)" opacity="0.9"/>
 
-  <!-- Sound waves (kinetic) -->
-  <path d="M 150 256 Q 180 230, 210 256" stroke="url(#grad1)" stroke-width="4" fill="none" opacity="0.7" stroke-linecap="round"/>
-  <path d="M 140 256 Q 175 215, 210 256" stroke="url(#grad1)" stroke-width="3" fill="none" opacity="0.5" stroke-linecap="round"/>
-  <path d="M 130 256 Q 170 200, 210 256" stroke="url(#grad1)" stroke-width="2" fill="none" opacity="0.3" stroke-linecap="round"/>
+  <!-- Body in motion -->
+  <ellipse cx="256" cy="280" rx="30" ry="40" fill="url(#grad2)" opacity="0.8" transform="rotate(-10 256 280)"/>
 
-  <path d="M 362 256 Q 332 230, 302 256" stroke="url(#grad1)" stroke-width="4" fill="none" opacity="0.7" stroke-linecap="round"/>
-  <path d="M 372 256 Q 337 215, 302 256" stroke="url(#grad1)" stroke-width="3" fill="none" opacity="0.5" stroke-linecap="round"/>
-  <path d="M 382 256 Q 342 200, 302 256" stroke="url(#grad1)" stroke-width="2" fill="none" opacity="0.3" stroke-linecap="round"/>
+  <!-- Arms (conducting/moving) -->
+  <path d="M 230 265 Q 200 250, 180 240" stroke="url(#grad1)" stroke-width="8" fill="none" opacity="0.8" stroke-linecap="round"/>
+  <path d="M 282 265 Q 320 270, 340 285" stroke="url(#grad1)" stroke-width="8" fill="none" opacity="0.8" stroke-linecap="round"/>
 
-  <!-- Music notes (orchestra) -->
-  <circle cx="340" cy="180" r="12" fill="url(#grad2)"/>
-  <rect x="350" y="140" width="4" height="40" fill="url(#grad2)"/>
-  <path d="M 354 140 L 370 135 L 370 165 L 354 160 Z" fill="url(#grad2)"/>
+  <!-- Legs (dynamic stance) -->
+  <path d="M 245 310 Q 235 340, 230 360" stroke="url(#grad1)" stroke-width="10" fill="none" opacity="0.8" stroke-linecap="round"/>
+  <path d="M 267 310 Q 285 335, 295 355" stroke="url(#grad1)" stroke-width="10" fill="none" opacity="0.8" stroke-linecap="round"/>
 
-  <circle cx="380" cy="220" r="10" fill="url(#grad2)" opacity="0.8"/>
-  <rect x="388" y="185" width="3" height="35" fill="url(#grad2)" opacity="0.8"/>
+  <!-- Sound waves emanating (kinetic sound) -->
+  <path d="M 120 256 Q 150 220, 180 256 T 210 256" stroke="url(#grad1)" stroke-width="5" fill="none" opacity="0.7" stroke-linecap="round" stroke-dasharray="5 5"/>
+  <path d="M 110 256 Q 145 200, 180 256 T 210 256" stroke="url(#grad1)" stroke-width="4" fill="none" opacity="0.5" stroke-linecap="round"/>
+  <path d="M 100 256 Q 140 180, 180 256 T 210 256" stroke="url(#grad1)" stroke-width="3" fill="none" opacity="0.3" stroke-linecap="round"/>
 
-  <circle cx="172" cy="180" r="12" fill="url(#grad2)"/>
-  <rect x="168" y="140" width="4" height="40" fill="url(#grad2)"/>
-  <path d="M 168 140 L 152 135 L 152 165 L 168 160 Z" fill="url(#grad2)"/>
+  <path d="M 392 256 Q 362 220, 332 256 T 302 256" stroke="url(#grad1)" stroke-width="5" fill="none" opacity="0.7" stroke-linecap="round" stroke-dasharray="5 5"/>
+  <path d="M 402 256 Q 367 200, 332 256 T 302 256" stroke="url(#grad1)" stroke-width="4" fill="none" opacity="0.5" stroke-linecap="round"/>
+  <path d="M 412 256 Q 372 180, 332 256 T 302 256" stroke="url(#grad1)" stroke-width="3" fill="none" opacity="0.3" stroke-linecap="round"/>
 
-  <circle cx="132" cy="220" r="10" fill="url(#grad2)" opacity="0.8"/>
-  <rect x="129" y="185" width="3" height="35" fill="url(#grad2)" opacity="0.8"/>
+  <!-- Frequency bars (orchestra/rhythm) -->
+  <rect x="160" y="370" width="8" height="30" rx="4" fill="url(#grad1)" opacity="0.7">
+    <animate attributeName="height" values="30;50;30" dur="1.5s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="180" y="360" width="8" height="40" rx="4" fill="url(#grad1)" opacity="0.7">
+    <animate attributeName="height" values="40;65;40" dur="1.3s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="200" y="355" width="8" height="45" rx="4" fill="url(#grad1)" opacity="0.7">
+    <animate attributeName="height" values="45;70;45" dur="1.7s" repeatCount="indefinite"/>
+  </rect>
 
-  <!-- EKO text -->
-  <text x="256" y="440" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="url(#grad1)" text-anchor="middle">EKO</text>
+  <rect x="344" y="370" width="8" height="30" rx="4" fill="url(#grad1)" opacity="0.7">
+    <animate attributeName="height" values="30;50;30" dur="1.6s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="324" y="360" width="8" height="40" rx="4" fill="url(#grad1)" opacity="0.7">
+    <animate attributeName="height" values="40;65;40" dur="1.4s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="304" y="355" width="8" height="45" rx="4" fill="url(#grad1)" opacity="0.7">
+    <animate attributeName="height" values="45;70;45" dur="1.8s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Visual particles (floating elements) -->
+  <circle cx="350" cy="180" r="6" fill="#00f5d4" opacity="0.8">
+    <animate attributeName="cy" values="180;160;180" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="162" cy="190" r="5" fill="#f72585" opacity="0.8">
+    <animate attributeName="cy" values="190;170;190" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="380" cy="320" r="7" fill="#ff9f1c" opacity="0.7">
+    <animate attributeName="cy" values="320;300;320" dur="3.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="132" cy="330" r="6" fill="#7b2cbf" opacity="0.7">
+    <animate attributeName="cy" values="330;310;330" dur="2.8s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- EKO text with enhanced styling -->
+  <text x="256" y="455" font-family="'Outfit', 'Arial', sans-serif" font-size="90" font-weight="900" fill="url(#grad1)" text-anchor="middle" letter-spacing="8">EKO</text>
 </svg>

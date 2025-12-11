@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EKO - Dashboard</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --accent-cyan: #00f5d4;
+            --accent-magenta: #f72585;
+            --accent-purple: #7b2cbf;
+            --accent-orange: #ff9f1c;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            opacity: 0.12;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle at 20% 50%, var(--accent-cyan) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, var(--accent-magenta) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, var(--accent-purple) 0%, transparent 50%),
+                        radial-gradient(circle at 60% 90%, var(--accent-orange) 0%, transparent 50%);
+            animation: float 25s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(30px, -30px) rotate(90deg); }
+            50% { transform: translate(-20px, 20px) rotate(180deg); }
+            75% { transform: translate(40px, 10px) rotate(270deg); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header with logo */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 30px;
+            filter: drop-shadow(0 15px 40px rgba(0, 245, 212, 0.4));
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 15px 40px rgba(0, 245, 212, 0.4)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 20px 50px rgba(247, 37, 133, 0.5)); }
+        }
+
+        h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple), var(--accent-magenta), var(--accent-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            letter-spacing: 0.15em;
+        }
+
+        .tagline {
+            font-size: 1.8rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            letter-spacing: 0.08em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Navigation cards */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .nav-card {
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-primary);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--gradient-start);
+            box-shadow: 0 30px 80px rgba(0, 245, 212, 0.3);
+        }
+
+        .nav-card:hover::before {
+            opacity: 0.1;
+        }
+
+        /* Featured card (EKOplay) */
+        .nav-card.featured {
+            grid-column: span 2;
+            background: linear-gradient(135deg,
+                rgba(0, 245, 212, 0.08) 0%,
+                rgba(123, 44, 191, 0.08) 50%,
+                rgba(247, 37, 133, 0.08) 100%);
+            border: 3px solid;
+            border-image: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple), var(--accent-magenta)) 1;
+            border-radius: 24px;
+        }
+
+        .nav-card.featured:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 40px 100px rgba(247, 37, 133, 0.4);
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 10px 30px currentColor);
+        }
+
+        .featured .card-icon {
+            font-size: 5rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .card-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .featured .card-title {
+            font-size: 2.5rem;
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .featured .card-description {
+            font-size: 1.2rem;
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-magenta), var(--accent-orange));
+            color: var(--bg-dark);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Color schemes for each card */
+        .card-questionnaire {
+            --gradient-start: #00f5d4;
+            --gradient-end: #7b2cbf;
+        }
+
+        .card-admin {
+            --gradient-start: #7b2cbf;
+            --gradient-end: #f72585;
+        }
+
+        .card-analytics {
+            --gradient-start: #f72585;
+            --gradient-end: #ff9f1c;
+        }
+
+        .card-qr {
+            --gradient-start: #00f5d4;
+            --gradient-end: #ff9f1c;
+        }
+
+        .card-play {
+            --gradient-start: #00f5d4;
+            --gradient-end: #f72585;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .nav-card.featured {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+
+            .tagline {
+                font-size: 1.3rem;
+            }
+
+            .logo {
+                width: 120px;
+                height: 120px;
+            }
+
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-title {
+                font-size: 1.5rem;
+            }
+
+            .featured .card-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <div class="container">
+        <div class="header">
+            <img src="logo.svg" alt="EKO Logo" class="logo">
+            <h1>EKO</h1>
+            <p class="tagline">Embodied Kinetic Orchestra</p>
+            <p class="subtitle">Immersive Art Experience Dashboard</p>
+        </div>
+
+        <div class="nav-grid">
+            <!-- Featured: EKOplay -->
+            <a href="https://sean4e.github.io/EKOplay/" target="_blank" class="nav-card featured card-play">
+                <div class="card-icon">🎮</div>
+                <h2 class="card-title">EKOplay</h2>
+                <p class="card-description">
+                    Interactive playful prototype! Explore the creative playground where movement, sound, and visuals come alive. Test features, experiment with ideas, and experience EKO in action.
+                </p>
+                <span class="card-badge">✨ Featured Experience</span>
+            </a>
+
+            <!-- Questionnaire -->
+            <a href="index.html" class="nav-card card-questionnaire">
+                <div class="card-icon">📝</div>
+                <h2 class="card-title">Questionnaire</h2>
+                <p class="card-description">
+                    Collect audience insights on myths, movement, sound, visuals, and rituals. 20 questions to shape the experience.
+                </p>
+            </a>
+
+            <!-- Admin Dashboard -->
+            <a href="admin.html" class="nav-card card-admin">
+                <div class="card-icon">👤</div>
+                <h2 class="card-title">Admin Panel</h2>
+                <p class="card-description">
+                    Monitor responses in real-time. View statistics, manage data, and export to Excel, CSV, or JSON formats.
+                </p>
+            </a>
+
+            <!-- Analytics Report -->
+            <a href="analytics.html" class="nav-card card-analytics">
+                <div class="card-icon">📊</div>
+                <h2 class="card-title">Analytics</h2>
+                <p class="card-description">
+                    Professional insights with 9 interactive charts, automated analysis, and project recommendations.
+                </p>
+            </a>
+
+            <!-- QR Code Page -->
+            <a href="qr.html" class="nav-card card-qr">
+                <div class="card-icon">📱</div>
+                <h2 class="card-title">QR Codes</h2>
+                <p class="card-description">
+                    Download branded QR codes and posters for sharing. Multiple variants for digital and print use.
+                </p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

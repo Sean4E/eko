@@ -6,7 +6,9 @@
     <title>EKO QR Code - Share & Print</title>
 
     <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 
     <style>
         :root {
@@ -14,8 +16,11 @@
             --accent-cyan: #00f5d4;
             --accent-magenta: #f72585;
             --accent-purple: #7b2cbf;
+            --accent-orange: #ff9f1c;
             --text-primary: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         * {
@@ -25,7 +30,7 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Outfit', 'Arial', sans-serif;
             background: var(--bg-dark);
             color: var(--text-primary);
             min-height: 100vh;
@@ -33,42 +38,117 @@
             align-items: center;
             justify-content: center;
             padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated gradient background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            opacity: 0.15;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle at 20% 50%, var(--accent-cyan) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, var(--accent-magenta) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, var(--accent-purple) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Logo */
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            filter: drop-shadow(0 10px 30px rgba(0, 245, 212, 0.4));
         }
 
         h1 {
-            font-size: 3rem;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple), var(--accent-magenta));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
+            letter-spacing: 0.1em;
         }
 
         .subtitle {
             color: var(--text-secondary);
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-bottom: 40px;
+            letter-spacing: 0.05em;
+        }
+
+        /* Poster-style QR container */
+        .qr-poster {
+            background: linear-gradient(135deg,
+                rgba(0, 245, 212, 0.1) 0%,
+                rgba(123, 44, 191, 0.1) 50%,
+                rgba(247, 37, 133, 0.1) 100%);
+            border: 2px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 60px;
+            display: inline-block;
+            margin-bottom: 40px;
+            position: relative;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 30px 80px rgba(0, 245, 212, 0.2),
+                        inset 0 0 80px rgba(0, 245, 212, 0.05);
+        }
+
+        .qr-poster::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple), var(--accent-magenta), var(--accent-orange));
+            border-radius: 32px;
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(10px);
         }
 
         .qr-container {
-            background: white;
-            padding: 40px;
-            border-radius: 24px;
+            background: #0a0a0f;
+            padding: 30px;
+            border-radius: 20px;
             display: inline-block;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0, 245, 212, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 3px solid var(--accent-cyan);
         }
 
         .qr-code {
-            max-width: 400px;
+            max-width: 350px;
             width: 100%;
             height: auto;
             display: block;
+            border-radius: 12px;
         }
 
         .url {
@@ -143,9 +223,18 @@
             margin-left: 20px;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
+            }
+
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+
+            .qr-poster {
+                padding: 30px;
             }
 
             .qr-container {
@@ -153,38 +242,48 @@
             }
 
             .qr-code {
-                max-width: 300px;
+                max-width: 280px;
             }
 
             .url {
                 font-size: 1.1rem;
             }
+
+            .buttons {
+                flex-direction: column;
+            }
         }
 
         @media print {
-            body {
-                background: white;
-            }
-
+            .bg-animation,
             .buttons,
             .description,
             .info {
                 display: none;
             }
 
-            .qr-container {
+            body {
+                background: white;
+            }
+
+            .qr-poster {
                 box-shadow: none;
             }
         }
     </style>
 </head>
 <body>
+    <div class="bg-animation"></div>
+
     <div class="container">
+        <img src="logo.svg" alt="EKO Logo" class="logo">
         <h1>EKO</h1>
         <p class="subtitle">Embodied Kinetic Orchestra</p>
 
-        <div class="qr-container">
-            <img src="eko-qr-code.png" alt="QR Code for EKO Questionnaire" class="qr-code">
+        <div class="qr-poster">
+            <div class="qr-container">
+                <img src="eko-qr-code.png" alt="QR Code for EKO Questionnaire" class="qr-code">
+            </div>
         </div>
 
         <div class="url">sean4e.github.io/eko</div>
