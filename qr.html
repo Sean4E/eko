@@ -196,20 +196,34 @@
         </p>
 
         <div class="buttons">
-            <a href="eko-qr-code.png" download="eko-qr-code.png" class="btn">Download QR Code</a>
-            <a href="eko-qr-code-hires.png" download="eko-qr-code-hires.png" class="btn btn-secondary">Download High-Res</a>
-            <a href="eko-poster.png" download="eko-poster.png" class="btn btn-secondary">Download Poster</a>
-            <button onclick="window.print()" class="btn btn-secondary">Print QR Code</button>
+            <a href="eko-qr-code.png" download="eko-qr-code.png" class="btn">Download (Cyan on Dark)</a>
+            <a href="eko-qr-code-hires.png" download="eko-qr-code-hires.png" class="btn">Download High-Res</a>
+            <a href="eko-qr-code-magenta.png" download="eko-qr-code-magenta.png" class="btn btn-secondary">Magenta Variant</a>
+            <a href="eko-qr-code-print.png" download="eko-qr-code-print.png" class="btn btn-secondary">Print Version</a>
+            <a href="eko-poster.png" download="eko-poster.png" class="btn btn-secondary">Full Poster (A4)</a>
+            <button onclick="window.print()" class="btn btn-secondary">🖨️ Print</button>
+            <button onclick="shareQR()" class="btn">📤 Share</button>
         </div>
 
         <div class="info">
-            <h3>Share This QR Code</h3>
+            <h3>QR Code Variants</h3>
             <ul>
-                <li>📱 Add to social media posts</li>
-                <li>🖨️ Print on flyers or posters</li>
+                <li><strong>Cyan on Dark</strong> - Best for digital displays and dark backgrounds</li>
+                <li><strong>High-Res</strong> - Print quality with cyan border</li>
+                <li><strong>Magenta Variant</strong> - Alternative branding color</li>
+                <li><strong>Print Version</strong> - Optimized for printing with gradient border</li>
+                <li><strong>Full Poster</strong> - Complete A4 poster with gradients</li>
+            </ul>
+        </div>
+
+        <div class="info" style="margin-top: 30px;">
+            <h3>Share Options</h3>
+            <ul>
+                <li>📱 Post on social media</li>
+                <li>🖨️ Print flyers or posters</li>
                 <li>📧 Include in email campaigns</li>
-                <li>💬 Share in presentations</li>
-                <li>🎨 Display at exhibitions or events</li>
+                <li>💬 Add to presentations</li>
+                <li>🎨 Display at events</li>
             </ul>
         </div>
     </div>
@@ -225,6 +239,55 @@
                 }, 2000);
             });
         });
+
+        // Share functionality
+        async function shareQR() {
+            const shareData = {
+                title: 'EKO - Embodied Kinetic Orchestra',
+                text: 'Help shape an immersive art experience! Share your thoughts on myths, movement, sound & rituals.',
+                url: 'https://sean4e.github.io/eko'
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                    console.log('Shared successfully!');
+                } else {
+                    // Fallback: Copy to clipboard
+                    await navigator.clipboard.writeText(shareData.url);
+                    alert('Link copied to clipboard! Share it anywhere you like.');
+                }
+            } catch (err) {
+                // If sharing fails or is cancelled
+                if (err.name !== 'AbortError') {
+                    // Copy to clipboard as fallback
+                    try {
+                        await navigator.clipboard.writeText(shareData.url);
+                        alert('Link copied to clipboard!');
+                    } catch (clipErr) {
+                        console.error('Share failed:', err);
+                    }
+                }
+            }
+        }
+
+        // Alternative share methods
+        function shareOnTwitter() {
+            const url = encodeURIComponent('https://sean4e.github.io/eko');
+            const text = encodeURIComponent('Help shape an immersive art experience! #EKO #InteractiveArt');
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+        }
+
+        function shareOnFacebook() {
+            const url = encodeURIComponent('https://sean4e.github.io/eko');
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        }
+
+        function shareViaEmail() {
+            const subject = encodeURIComponent('EKO - Share Your Ideas');
+            const body = encodeURIComponent('Help shape an immersive art experience!\n\nTake the questionnaire: https://sean4e.github.io/eko');
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
     </script>
 </body>
 </html>
