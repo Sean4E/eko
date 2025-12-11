@@ -1,15 +1,15 @@
-// Firebase configuration
-// IMPORTANT: Replace these with your actual Firebase project credentials
-// Get these from: https://console.firebase.google.com/
+// Firebase configuration for EKO project (eko1-4e)
+// IMPORTANT: Replace the placeholder values with your actual credentials
+// Get these from: https://console.firebase.google.com/u/0/project/eko1-4e/settings/general
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID",
-    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com"
+    apiKey: "YOUR_API_KEY_HERE",
+    authDomain: "eko1-4e.firebaseapp.com",
+    projectId: "eko1-4e",
+    storageBucket: "eko1-4e.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID_HERE",
+    appId: "YOUR_APP_ID_HERE",
+    databaseURL: "https://eko1-4e-default-rtdb.firebaseio.com"
 };
 
 // Initialize Firebase

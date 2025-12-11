@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EKO - Embodied Kinetic Orchestra</title>
+
+    <!-- Favicon and Icons -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -809,8 +818,6 @@
             </div>
 
             <div class="submit-section">
-                <input type="text" class="name-input" id="participantName" placeholder="Your name (optional)">
-                <br>
                 <button type="submit" class="submit-btn">Submit My Ideas ✨</button>
             </div>
         </form>
@@ -921,7 +928,8 @@
         document.getElementById('questionnaire').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            responses.participantName = document.getElementById('participantName').value || 'Anonymous';
+            // All responses are anonymous
+            responses.participantName = 'Anonymous';
             responses.timestamp = new Date().toISOString();
 
             // Try to save to Firebase
@@ -960,23 +968,22 @@
         function resetForm() {
             responses = {};
             answeredQuestions.clear();
-            
+
             document.querySelectorAll('.choice-btn, .toggle-option').forEach(el => {
                 el.classList.remove('selected');
             });
-            
+
             document.querySelectorAll('.text-input').forEach(input => {
                 input.value = '';
             });
-            
+
             document.querySelectorAll('.slider').forEach(slider => {
                 slider.value = 3;
             });
-            
-            document.getElementById('participantName').value = '';
+
             document.getElementById('questionnaire').classList.remove('hidden');
             document.getElementById('successMessage').classList.remove('show');
-            
+
             updateProgress();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
