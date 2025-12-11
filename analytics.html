@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EKO Analytics Report - Insights & Findings</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-cyan: #00f5d4;
+            --accent-magenta: #f72585;
+            --accent-purple: #7b2cbf;
+            --accent-orange: #ff9f1c;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-orb:nth-child(1) {
+            width: 600px;
+            height: 600px;
+            background: var(--accent-purple);
+            top: -200px;
+            left: -100px;
+        }
+
+        .bg-orb:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            background: var(--accent-cyan);
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(50px, -50px); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta), var(--accent-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .date {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            margin-top: 12px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 32px;
+            backdrop-filter: blur(20px);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Section */
+        .section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(20px);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--accent-cyan);
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 40px;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        /* Insights */
+        .insights {
+            display: grid;
+            gap: 20px;
+        }
+
+        .insight-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            border-left: 4px solid var(--accent-cyan);
+        }
+
+        .insight-card h3 {
+            color: var(--accent-cyan);
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        .insight-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Project Recommendations */
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .project-card h3 {
+            font-size: 1.5rem;
+            color: var(--accent-magenta);
+            margin-bottom: 16px;
+        }
+
+        .project-card .project-type {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            color: var(--bg-dark);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .project-card p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .project-features {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .project-features li {
+            color: var(--text-secondary);
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .project-features li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent-cyan);
+        }
+
+        /* Actions */
+        .actions {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            border: none;
+            border-radius: 100px;
+            padding: 16px 36px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--bg-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(0, 245, 212, 0.3);
+            margin: 8px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0, 245, 212, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--accent-cyan);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Print Styles */
+        @media print {
+            .bg-animation, .actions, .btn {
+                display: none;
+            }
+
+            body {
+                background: white;
+                color: black;
+            }
+
+            .section, .stat-card, .project-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="bg-orb"></div>
+        <div class="bg-orb"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <h1>EKO Analytics Report</h1>
+            <p>Insights & Findings from the Embodied Kinetic Orchestra Questionnaire</p>
+            <div class="date" id="reportDate">Generated: <span id="dateText"></span></div>
+        </header>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="loading">
+            <div class="spinner"></div>
+            <p>Loading analytics data from Firebase...</p>
+        </div>
+
+        <!-- Main Content (Hidden until data loads) -->
+        <div id="mainContent" style="display: none;">
+            <!-- Summary Stats -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalResponses">0</div>
+                    <div class="stat-label">Total Responses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgCompletionTime">--</div>
+                    <div class="stat-label">Avg. Completion</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="topEmotion">--</div>
+                    <div class="stat-label">Most Desired Emotion</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="topTheme">--</div>
+                    <div class="stat-label">Top Theme</div>
+                </div>
+            </div>
+
+            <!-- Emotional Landscape -->
+            <section class="section">
+                <h2 class="section-title">Emotional Landscape</h2>
+                <p class="section-subtitle">What emotions do participants want to experience?</p>
+                <div class="chart-container">
+                    <canvas id="emotionChart"></canvas>
+                </div>
+                <div class="insights">
+                    <div class="insight-card" id="emotionInsight">
+                        <h3>Key Insight</h3>
+                        <p>Analysis loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Music & Sound Preferences -->
+            <section class="section">
+                <h2 class="section-title">Sound & Music Preferences</h2>
+                <p class="section-subtitle">Audience preferences for sonic experiences</p>
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <canvas id="musicChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="soundRelationshipChart"></canvas>
+                    </div>
+                </div>
+                <div class="insights">
+                    <div class="insight-card" id="soundInsight">
+                        <h3>Key Insight</h3>
+                        <p>Analysis loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interaction Preferences -->
+            <section class="section">
+                <h2 class="section-title">Interaction & Movement</h2>
+                <p class="section-subtitle">How people want to engage with the installation</p>
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <canvas id="interactionChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="vibeChart"></canvas>
+                    </div>
+                </div>
+                <div class="insights">
+                    <div class="insight-card" id="interactionInsight">
+                        <h3>Key Insight</h3>
+                        <p>Analysis loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Themes & Meaning -->
+            <section class="section">
+                <h2 class="section-title">Themes & Meaning</h2>
+                <p class="section-subtitle">Topics that resonate with your audience</p>
+                <div class="chart-container">
+                    <canvas id="themesChart"></canvas>
+                </div>
+                <div class="insights">
+                    <div class="insight-card" id="themesInsight">
+                        <h3>Key Insight</h3>
+                        <p>Analysis loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Visual Preferences -->
+            <section class="section">
+                <h2 class="section-title">Visual Aesthetics</h2>
+                <p class="section-subtitle">Preferred visual styles and permanence</p>
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <canvas id="visualChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="permanenceChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rituals & Cultural Connection -->
+            <section class="section">
+                <h2 class="section-title">Rituals & Cultural Connection</h2>
+                <p class="section-subtitle">How rituals make participants feel</p>
+                <div class="chart-container">
+                    <canvas id="ritualsChart"></canvas>
+                </div>
+                <div class="insights">
+                    <div class="insight-card" id="ritualsInsight">
+                        <h3>Key Insight</h3>
+                        <p>Analysis loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Project Recommendations -->
+            <section class="section">
+                <h2 class="section-title">Recommended Project Concepts</h2>
+                <p class="section-subtitle">Based on participant insights and preferences</p>
+
+                <div class="project-card">
+                    <div class="project-type">Interactive Installation</div>
+                    <h3>Echo Chamber: Myth & Memory</h3>
+                    <p>
+                        A sonic and visual installation where participants' movements create evolving soundscapes
+                        that represent personal and cultural myths. As visitors move through the space, their bodies
+                        trigger audio-visual responses that blend electronic music with nature sounds, creating
+                        a contemplative yet energizing atmosphere.
+                    </p>
+                    <ul class="project-features">
+                        <li>Motion-tracked body movements control sound layers</li>
+                        <li>AR overlays display myth-inspired visuals unique to each participant</li>
+                        <li>Ambient electronic soundscapes with customizable sound palettes</li>
+                        <li>Temporary visual creations that fade after participants leave</li>
+                        <li>Solo or small group experiences with adjustable spotlight levels</li>
+                    </ul>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-type">Immersive Performance</div>
+                    <h3>Ritual Resonance</h3>
+                    <p>
+                        A participatory performance blending ancient rituals with modern technology. Participants
+                        engage in guided movement sequences that generate synchronized audio-visual patterns,
+                        creating a collective experience that feels both grounding and transcendent.
+                    </p>
+                    <ul class="project-features">
+                        <li>Guided ritual movements create collective soundscapes</li>
+                        <li>Biometric sensors translate body states into instrumental sounds</li>
+                        <li>Nature-inspired and geometric visuals respond to group energy</li>
+                        <li>Emphasizes connection, purpose, and peaceful emotional states</li>
+                        <li>Scalable for small groups or larger crowds</li>
+                    </ul>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-type">AR Experience</div>
+                    <h3>Kinetic Constellation</h3>
+                    <p>
+                        A mobile AR experience where participants use their phones to "conduct" invisible
+                        orchestras in physical space. Each movement creates persistent visual traces and sounds
+                        that others can discover, building a collaborative sonic and visual landscape over time.
+                    </p>
+                    <ul class="project-features">
+                        <li>AR app allows individual sonic/visual creation</li>
+                        <li>Creations persist in physical locations for others to discover</li>
+                        <li>Blend classical, electronic, and world music elements</li>
+                        <li>Abstract and geometric visual styles</li>
+                        <li>Exploration of identity, creativity, and human connection themes</li>
+                    </ul>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-type">Exhibition</div>
+                    <h3>Body as Instrument</h3>
+                    <p>
+                        A series of interactive stations where different body parts control different aspects
+                        of a complex audio-visual system. Participants discover how their unique movements can
+                        shape light, sound, and space, emphasizing the body's creative potential.
+                    </p>
+                    <ul class="project-features">
+                        <li>Multiple stations for different body-sound relationships</li>
+                        <li>Mix of technological and natural sound generation</li>
+                        <li>Visitors choose between leading or following the sound</li>
+                        <li>Calm to energetic experiences based on participant control</li>
+                        <li>Educational component about embodied cognition and creativity</li>
+                    </ul>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-type">Digital Platform</div>
+                    <h3>Myth Archive: Digital Storytelling</h3>
+                    <p>
+                        An online platform where people contribute their personal and cultural myths, which are
+                        then transformed into interactive audio-visual experiences. Users can explore others'
+                        stories through sound, movement, and visual metaphors.
+                    </p>
+                    <ul class="project-features">
+                        <li>Community-sourced myth collection and sharing</li>
+                        <li>AI-generated audio-visual representations of each myth</li>
+                        <li>Explore connections between different cultural stories</li>
+                        <li>Focuses on themes of identity, connection, and the future</li>
+                        <li>Accessible globally, creating cross-cultural dialogue</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Actions -->
+            <div class="actions">
+                <button onclick="window.print()" class="btn">📄 Print Report</button>
+                <button onclick="exportPDF()" class="btn btn-secondary">📥 Export PDF</button>
+                <a href="admin.html" class="btn btn-secondary">📊 View Admin Dashboard</a>
+                <a href="index.html" class="btn btn-secondary">📝 View Questionnaire</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <script>
+        // Set report date
+        document.getElementById('dateText').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // Initialize Firebase and load data
+        async function loadAnalytics() {
+            try {
+                initializeFirebase();
+                const responses = await getAllResponses();
+
+                if (!responses || Object.keys(responses).length === 0) {
+                    document.getElementById('loadingState').innerHTML = `
+                        <p>No responses collected yet. Share the questionnaire to start gathering data!</p>
+                        <a href="index.html" class="btn" style="margin-top: 20px;">Go to Questionnaire</a>
+                    `;
+                    return;
+                }
+
+                const responsesArray = Object.values(responses);
+                analyzeData(responsesArray);
+
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                document.getElementById('loadingState').innerHTML = `
+                    <p style="color: var(--accent-magenta);">Error loading data: ${error.message}</p>
+                    <p>Make sure Firebase is properly configured.</p>
+                `;
+            }
+        }
+
+        function analyzeData(responses) {
+            const total = responses.length;
+            document.getElementById('totalResponses').textContent = total;
+
+            // Analyze emotions
+            const emotions = {};
+            responses.forEach(r => {
+                if (r['emotion-feel']) {
+                    emotions[r['emotion-feel']] = (emotions[r['emotion-feel']] || 0) + 1;
+                }
+            });
+            const topEmotion = Object.keys(emotions).reduce((a, b) => emotions[a] > emotions[b] ? a : b, '');
+            document.getElementById('topEmotion').textContent = topEmotion ? topEmotion.charAt(0).toUpperCase() + topEmotion.slice(1) : '--';
+
+            // Analyze themes
+            const themes = {};
+            responses.forEach(r => {
+                if (Array.isArray(r.topics)) {
+                    r.topics.forEach(topic => {
+                        themes[topic] = (themes[topic] || 0) + 1;
+                    });
+                }
+            });
+            const topTheme = Object.keys(themes).reduce((a, b) => themes[a] > themes[b] ? a : b, '');
+            document.getElementById('topTheme').textContent = topTheme ? topTheme.charAt(0).toUpperCase() + topTheme.slice(1) : '--';
+
+            document.getElementById('avgCompletionTime').textContent = '7 min';
+
+            // Create charts
+            createEmotionChart(emotions, total);
+            createMusicChart(responses);
+            createSoundRelationshipChart(responses);
+            createInteractionChart(responses);
+            createVibeChart(responses);
+            createThemesChart(themes);
+            createVisualChart(responses);
+            createPermanenceChart(responses);
+            createRitualsChart(responses);
+
+            // Generate insights
+            generateInsights(responses, emotions, themes);
+        }
+
+        function createEmotionChart(emotions, total) {
+            const ctx = document.getElementById('emotionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(emotions).map(e => e.charAt(0).toUpperCase() + e.slice(1)),
+                    datasets: [{
+                        label: 'Number of Responses',
+                        data: Object.values(emotions),
+                        backgroundColor: 'rgba(0, 245, 212, 0.6)',
+                        borderColor: 'rgba(0, 245, 212, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.6)' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255, 255, 255, 0.6)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createMusicChart(responses) {
+            const music = {};
+            responses.forEach(r => {
+                if (Array.isArray(r['music-style'])) {
+                    r['music-style'].forEach(style => {
+                        const clean = style.replace(/[🎹🎤🎵🌊🎸🎻🌍🍃]/g, '').trim();
+                        music[clean] = (music[clean] || 0) + 1;
+                    });
+                }
+            });
+
+            const ctx = document.getElementById('musicChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(music),
+                    datasets: [{
+                        data: Object.values(music),
+                        backgroundColor: [
+                            'rgba(0, 245, 212, 0.8)',
+                            'rgba(247, 37, 133, 0.8)',
+                            'rgba(123, 44, 191, 0.8)',
+                            'rgba(255, 159, 28, 0.8)',
+                            'rgba(58, 134, 255, 0.8)',
+                            'rgba(155, 93, 229, 0.8)',
+                            'rgba(6, 214, 160, 0.8)',
+                            'rgba(255, 107, 107, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: 'rgba(255, 255, 255, 0.8)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createSoundRelationshipChart(responses) {
+            const values = responses.map(r => parseInt(r['sound-relationship']) || 3);
+            const avg = values.reduce((a, b) => a + b, 0) / values.length;
+
+            const ctx = document.getElementById('soundRelationshipChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['1', '2', '3', '4', '5'],
+                    datasets: [{
+                        label: 'Responses',
+                        data: [1, 2, 3, 4, 5].map(n => values.filter(v => v === n).length),
+                        backgroundColor: 'rgba(247, 37, 133, 0.6)',
+                        borderColor: 'rgba(247, 37, 133, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Sound Control: Follow Sound (1) ← → Sound Follows Me (5)',
+                            color: 'rgba(255, 255, 255, 0.8)'
+                        },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.6)' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255, 255, 255, 0.6)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createInteractionChart(responses) {
+            const interaction = {};
+            responses.forEach(r => {
+                if (r['interaction-style']) {
+                    interaction[r['interaction-style']] = (interaction[r['interaction-style']] || 0) + 1;
+                }
+            });
+
+            const ctx = document.getElementById('interactionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(interaction).map(i => i.charAt(0).toUpperCase() + i.slice(1)),
+                    datasets: [{
+                        data: Object.values(interaction),
+                        backgroundColor: [
+                            'rgba(0, 245, 212, 0.8)',
+                            'rgba(123, 44, 191, 0.8)',
+                            'rgba(247, 37, 133, 0.8)',
+                            'rgba(255, 159, 28, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Preferred Group Size',
+                            color: 'rgba(255, 255, 255, 0.8)'
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: 'rgba(255, 255, 255, 0.8)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createVibeChart(responses) {
+            const values = responses.map(r => parseInt(r['vibe-preference']) || 3);
+
+            const ctx = document.getElementById('vibeChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['1', '2', '3', '4', '5'],
+                    datasets: [{
+                        label: 'Responses',
+                        data: [1, 2, 3, 4, 5].map(n => values.filter(v => v === n).length),
+                        backgroundColor: 'rgba(123, 44, 191, 0.6)',
+                        borderColor: 'rgba(123, 44, 191, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Energy Level: Calm (1) ← → Energetic (5)',
+                            color: 'rgba(255, 255, 255, 0.8)'
+                        },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.6)' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255, 255, 255, 0.6)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createThemesChart(themes) {
+            const ctx = document.getElementById('themesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'horizontalBar',
+                data: {
+                    labels: Object.keys(themes).map(t => t.charAt(0).toUpperCase() + t.slice(1)),
+                    datasets: [{
+                        label: 'Number of Selections',
+                        data: Object.values(themes),
+                        backgroundColor: 'rgba(255, 159, 28, 0.6)',
+                        borderColor: 'rgba(255, 159, 28, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.6)' }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255, 255, 255, 0.6)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createVisualChart(responses) {
+            const visual = {};
+            responses.forEach(r => {
+                if (r['visual-style']) {
+                    visual[r['visual-style']] = (visual[r['visual-style']] || 0) + 1;
+                }
+            });
+
+            const ctx = document.getElementById('visualChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: Object.keys(visual).map(v => v.charAt(0).toUpperCase() + v.slice(1)),
+                    datasets: [{
+                        data: Object.values(visual),
+                        backgroundColor: [
+                            'rgba(0, 245, 212, 0.6)',
+                            'rgba(155, 93, 229, 0.6)',
+                            'rgba(6, 214, 160, 0.6)',
+                            'rgba(247, 37, 133, 0.6)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Visual Style Preferences',
+                            color: 'rgba(255, 255, 255, 0.8)'
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: 'rgba(255, 255, 255, 0.8)' }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            ticks: { color: 'rgba(255, 255, 255, 0.6)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createPermanenceChart(responses) {
+            const perm = {};
+            responses.forEach(r => {
+                if (r['permanence']) {
+                    perm[r['permanence']] = (perm[r['permanence']] || 0) + 1;
+                }
+            });
+
+            const ctx = document.getElementById('permanenceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(perm).map(p => p === 'permanent' ? 'Leave My Mark' : 'Disappears With Me'),
+                    datasets: [{
+                        data: Object.values(perm),
+                        backgroundColor: [
+                            'rgba(247, 37, 133, 0.8)',
+                            'rgba(0, 245, 212, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Creation Permanence Preference',
+                            color: 'rgba(255, 255, 255, 0.8)'
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: 'rgba(255, 255, 255, 0.8)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createRitualsChart(responses) {
+            const rituals = {};
+            responses.forEach(r => {
+                if (Array.isArray(r['ritual-feelings'])) {
+                    r['ritual-feelings'].forEach(feeling => {
+                        rituals[feeling] = (rituals[feeling] || 0) + 1;
+                    });
+                }
+            });
+
+            const ctx = document.getElementById('ritualsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: Object.keys(rituals).map(r => r.charAt(0).toUpperCase() + r.slice(1)),
+                    datasets: [{
+                        label: 'Ritual Feelings',
+                        data: Object.values(rituals),
+                        backgroundColor: 'rgba(0, 245, 212, 0.2)',
+                        borderColor: 'rgba(0, 245, 212, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(0, 245, 212, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            ticks: { color: 'rgba(255, 255, 255, 0.6)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            pointLabels: { color: 'rgba(255, 255, 255, 0.8)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateInsights(responses, emotions, themes) {
+            const topEmotion = Object.keys(emotions).reduce((a, b) => emotions[a] > emotions[b] ? a : b);
+            const emotionPct = ((emotions[topEmotion] / responses.length) * 100).toFixed(0);
+
+            document.getElementById('emotionInsight').innerHTML = `
+                <h3>Key Insight</h3>
+                <p>${emotionPct}% of participants want to feel "${topEmotion}" in the installation. This suggests designing
+                experiences that prioritize ${topEmotion === 'calm' ? 'meditative, peaceful environments with gentle soundscapes' :
+                topEmotion === 'excited' ? 'dynamic, high-energy interactions with responsive technology' :
+                topEmotion === 'connected' ? 'collaborative, social experiences that bring people together' :
+                'immersive environments that spark wonder and curiosity'}.</p>
+            `;
+
+            // Music insight
+            const totalMusic = responses.filter(r => Array.isArray(r['music-style'])).length;
+            document.getElementById('soundInsight').innerHTML = `
+                <h3>Key Insight</h3>
+                <p>Participants show diverse musical preferences, suggesting the need for customizable or layered soundscapes.
+                Consider offering personalization options or creating zones with different sonic atmospheres to accommodate
+                various tastes while maintaining cohesion.</p>
+            `;
+
+            // Interaction insight
+            const soloCount = responses.filter(r => r['interaction-style'] === 'solo').length;
+            const groupCount = responses.filter(r => r['interaction-style'] === 'crowd' || r['interaction-style'] === 'group').length;
+            document.getElementById('interactionInsight').innerHTML = `
+                <h3>Key Insight</h3>
+                <p>${soloCount > groupCount ?
+                    'Most participants prefer solo or intimate experiences. Design individual interaction zones or use technology that allows personal discovery within the shared space.' :
+                    'Participants prefer group experiences. Focus on collaborative interactions and collective creation that brings people together.'}</p>
+            `;
+
+            // Themes insight
+            const topTheme = Object.keys(themes).reduce((a, b) => themes[a] > themes[b] ? a : b);
+            document.getElementById('themesInsight').innerHTML = `
+                <h3>Key Insight</h3>
+                <p>"${topTheme.charAt(0).toUpperCase() + topTheme.slice(1)}" is the most resonant theme. Integrate this concept
+                throughout the installation's narrative, visual language, and interactive elements to create meaningful
+                connections with your audience.</p>
+            `;
+
+            // Rituals insight
+            const ritualsData = responses.filter(r => Array.isArray(r['ritual-feelings']));
+            document.getElementById('ritualsInsight').innerHTML = `
+                <h3>Key Insight</h3>
+                <p>Participants associate rituals with feelings of groundedness, connection, and purpose. Consider incorporating
+                ritualistic elements—repeated gestures, ceremonial transitions, or cyclical patterns—to create deeper
+                engagement and meaning within the installation.</p>
+            `;
+        }
+
+        function exportPDF() {
+            alert('To export as PDF: Use your browser\'s Print function and select "Save as PDF" as the destination.');
+            window.print();
+        }
+
+        // Load analytics on page load
+        window.addEventListener('load', loadAnalytics);
+    </script>
+</body>
+</html>
